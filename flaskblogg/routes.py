@@ -11,10 +11,12 @@ import json
 from functools import wraps
 from flaskblogg.forms import RegistrationForm, LoginForm, PostForm
 from jose import jwt
-from flaskblogg.models import User, Post, db
+from flaskblogg.models import User, Post, db, db_drop_and_create_all
 from .auth import auth
 from .auth.auth import requires_auth, AuthError
 # from flaskblog.auth import AuthError, requires_auth
+
+# db.create_all()
 
 posts = [
     {
