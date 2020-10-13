@@ -1,3 +1,4 @@
+import os
 from urllib.request import urlopen
 from flask import request, _request_ctx_stack, abort, Flask, jsonify, render_template, url_for, flash, session, redirect, g
 from six.moves.urllib.parse import urlencode
@@ -5,12 +6,12 @@ from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv, find_dotenv
 from werkzeug.exceptions import HTTPException
 from os import environ as env
-from flaskblog import app
+from flaskblogg import app
 import json
 from functools import wraps
-from flaskblog.forms import RegistrationForm, LoginForm, PostForm
+from flaskblogg.forms import RegistrationForm, LoginForm, PostForm
 from jose import jwt
-from flaskblog.models import User, Post
+from flaskblogg.models import User, Post, db
 from .auth import auth
 from .auth.auth import requires_auth, AuthError
 # from flaskblog.auth import AuthError, requires_auth
@@ -158,6 +159,11 @@ def new_post():
         flash('Your need to login', 'error')
         return redirect(url_for('home'))
     if form.validate_on_submit():
+        title = request.form['title']
+        content = request.form['content']
+        message = Post(title=title, content=content)
+        db.session.add(message)
+        db.session.commit()
         flash('Your Post has been Created!', 'success')
         return redirect(url_for('home'))
     return render_template('create_post.html', title='New Post', form=form, userinfo=session['profile'])
